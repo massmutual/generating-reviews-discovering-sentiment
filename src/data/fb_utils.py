@@ -8,7 +8,6 @@ import pymongo
 import json
 
 import urllib
-import urllib2
 import requests
 
 FacebookConfig = namedtuple('FacebookConfig', 'access_token, id, start_date, url, name')
@@ -79,7 +78,7 @@ def run(store, insight, fb_config, period=None):
         prev_date = fb_config.start_date
     caught_up = False
     response = get_insight(fb_config.id, insight, fb_config.url, fb_config.access_token)
-    print fb_config.name
+    print(fb_config.name)
     while not caught_up:
         records = parse_response(response, period)
         if records is None:
@@ -93,7 +92,7 @@ def run(store, insight, fb_config, period=None):
                         r = rec['value']
                     day = str(datetime.datetime.strptime(rec['end_time'].split('T')[0], '%Y-%m-%d').date() - datetime.timedelta(1))
                     store.save(insight, {'id':fb_config.id, 'date':day, 'value':r, 'name':fb_config.name, '_id':fb_config.name + day})
-                    print 'saved'
+                    print('saved')
                     d = datetime.datetime.strptime(day, '%Y-%m-%d').date()
                     if d <= prev_date:
                         caught_up = True

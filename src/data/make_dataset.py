@@ -1,26 +1,26 @@
-import urllib
-import urllib2
-import requests
-import json
+import sys
 import argparse
 import datetime
-import sys
+
 import ssl
+import pymongo
+import json
+import urllib
+import requests
+
 from collections import namedtuple
-
-from storage.storage import *
-
+from data.fb_utils import InsightStore
 
 FacebookConfig = namedtuple('FacebookConfig', 'access_token, id, start_date, url, name')
 
+# args = parser.parse_args()
 
-args = parser.parse_args()
 store = InsightStore()
 insight_metrics = json.load(open('/home/mm64067/facebook/insights/util/insight_metrics.json'))
-config = json.load(open('/home/mm64067/facebook/insights/config.json'))
-#     insight_metrics = json.load(open('util/insight_metrics.json'))
-#     config = json.load(open('config.json'))
-print 'Getting Insights'
+config = json.load(open('./config.json'))
+
+
+
 for page in config["id_list"]:
     mth,day,yr = map(int, page["date"].split("-"))
     start_date = datetime.date(yr,mth,day)
