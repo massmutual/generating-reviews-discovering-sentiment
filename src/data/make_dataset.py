@@ -1,23 +1,46 @@
+# system
 import sys
-import argparse
-import datetime
-
+import os
+from dotenv import find_dotenv, load_dotenv
+# dataset / api access
 import ssl
 import pymongo
 import json
 import urllib
 import requests
-
+# misc
+import argparse
+import datetime
 from collections import namedtuple
-from data.fb_utils import InsightStore
+# local
+from fb_utils import InsightStore
+
+# load secrets
+dotenv_success = load_dotenv(find_dotenv())
+if not dotenv_success:
+    print("dotenv not loaded")
+
+print(os.environ.get("user"))
+
+# accessing mongo
+client = pymongo.MongoClient('')
+db = client['']
+collection = db['']
+
+
 
 FacebookConfig = namedtuple('FacebookConfig', 'access_token, id, start_date, url, name')
-
-# args = parser.parse_args()
-
 store = InsightStore()
-insight_metrics = json.load(open('/home/mm64067/facebook/insights/util/insight_metrics.json'))
+
+insight_metrics = json.load(open('./insight_metrics.json'))
 config = json.load(open('./config.json'))
+
+page = config["id_list"][1]
+mth,day,yr = map(int, page["date"].split("-"))
+start_date = datetime.date(yr,mth,day)
+
+fb_config = FacebookConfig._make([page['access_token'], page['id'], start_date, config['url'], page['name']])
+
 
 
 
@@ -31,7 +54,7 @@ for page in config["id_list"]:
             for i in insight_metrics[metric]:
                 arg.append("--"+i)
                 if i == 'page_fans':
-                    print 'page_fans'
+                    print('page_fans')
         args = parser.parse_args(arg)
 
     if args.page_impressions:
